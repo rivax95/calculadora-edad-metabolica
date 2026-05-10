@@ -718,6 +718,17 @@ input[type="number"]::-webkit-outer-spin-button {
   width: 100%;
 }
 
+.status-modal p:not(.eyebrow) {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.status-modal.is-error .eyebrow {
+  color: #9f2626;
+}
+
 @media (max-width: 760px) {
   .calculator-card,
   .whatsapp-card {

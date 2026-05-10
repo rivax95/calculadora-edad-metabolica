@@ -8,6 +8,7 @@ const defaults = {
 
 
 const WHATSAPP_PHONE = "34623243958";
+const EMAIL_ENDPOINT = "/api/send-result";
 const DEFAULT_WHATSAPP_MESSAGE = "Hola, quiero informacion sobre los planes despues de usar la calculadora de edad metabolica.";
 
 const activityProfiles = {
@@ -50,6 +51,12 @@ const termsButton = document.querySelector("#termsButton");
 const termsModal = document.querySelector("#termsModal");
 const termsCloseButton = document.querySelector("#termsCloseButton");
 const termsAcceptButton = document.querySelector("#termsAcceptButton");
+const emailStatusModal = document.querySelector("#emailStatusModal");
+const emailStatusCloseButton = document.querySelector("#emailStatusCloseButton");
+const emailStatusAcceptButton = document.querySelector("#emailStatusAcceptButton");
+const emailStatusEyebrow = document.querySelector("#emailStatusEyebrow");
+const emailStatusTitle = document.querySelector("#emailStatusTitle");
+const emailStatusText = document.querySelector("#emailStatusText");
 
 const fields = {
   fullName: document.querySelector("#fullName"),
@@ -252,6 +259,20 @@ function closeTermsModal() {
   termsButton.focus();
 }
 
+function showEmailStatusModal({ eyebrow, title, text, isError = false }) {
+  emailStatusEyebrow.textContent = eyebrow;
+  emailStatusTitle.textContent = title;
+  emailStatusText.textContent = text;
+  emailStatusModal.querySelector(".status-modal").classList.toggle("is-error", isError);
+  emailStatusModal.classList.remove("is-hidden");
+  emailStatusAcceptButton.focus();
+}
+
+function closeEmailStatusModal() {
+  emailStatusModal.classList.add("is-hidden");
+  calculateButton.focus();
+}
+
 function render() {
   const data = getFormData();
   const result = calculateMetabolicAge(data);
@@ -282,6 +303,26 @@ function render() {
 
   latestResult = result;
   updateWhatsappLink(data, latestResult);
+
+  return { data, result };
+}
+
+async function sendResultEmail(data, result) {
+  const response = await fetch(EMAIL_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data, result }),
+  });
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(payload.error || "No se pudo enviar el correo.");
+  }
+
+  return payload;
 }
 
 function resetForm() {
@@ -301,7 +342,7 @@ function resetForm() {
   refreshSubmitState();
 }
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!form.checkValidity()) {
@@ -310,8 +351,28 @@ form.addEventListener("submit", (event) => {
   }
 
   hasCalculated = true;
-  render();
+  const { data, result } = render();
   showResults();
+
+  calculateButton.disabled = true;
+
+  try {
+    await sendResultEmail(data, result);
+    showEmailStatusModal({
+      eyebrow: "Resultado enviado",
+      title: "Revisa tu correo",
+      text: `Te hemos enviado el resumen de tu edad metabolica a ${data.email}.`,
+    });
+  } catch (error) {
+    showEmailStatusModal({
+      eyebrow: "Correo pendiente",
+      title: "No se pudo enviar el email",
+      text: "El resultado se ha calculado, pero el envio por correo necesita que el backend de Resend este desplegado y configurado.",
+      isError: true,
+    });
+  } finally {
+    refreshSubmitState();
+  }
 });
 
 form.addEventListener("input", () => {
@@ -342,6 +403,8 @@ termsAcceptButton.addEventListener("click", () => {
     render();
   }
 });
+emailStatusCloseButton.addEventListener("click", closeEmailStatusModal);
+emailStatusAcceptButton.addEventListener("click", closeEmailStatusModal);
 
 termsModal.addEventListener("click", (event) => {
   if (event.target === termsModal) {
@@ -349,9 +412,19 @@ termsModal.addEventListener("click", (event) => {
   }
 });
 
+emailStatusModal.addEventListener("click", (event) => {
+  if (event.target === emailStatusModal) {
+    closeEmailStatusModal();
+  }
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !termsModal.classList.contains("is-hidden")) {
     closeTermsModal();
+  }
+
+  if (event.key === "Escape" && !emailStatusModal.classList.contains("is-hidden")) {
+    closeEmailStatusModal();
   }
 });
 
