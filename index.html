@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de edad metabolica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="page-title" aria-label="Calculadora de edad metabolica">
+        <span>Calculadora de edad</span>
+        <strong>metabolica</strong>
+      </header>
+
+      <section class="calculator-card">
+        <div class="start-icon" aria-hidden="true">
+          <i data-lucide="flag"></i>
+        </div>
+
+        <div class="card-heading">
+          <p class="eyebrow">Medicion automatica</p>
+          <h1>Empecemos</h1>
+          <p>
+            Tu edad metabolica mide como tu dieta y estilo de vida afectan tu salud, a diferencia de tu edad
+            cronologica.
+          </p>
+        </div>
+
+        <form id="metabolicForm" class="form-grid">
+          <div class="field">
+            <label for="fullName">Como te llamas?</label>
+            <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Juan" required />
+          </div>
+
+          <div class="field">
+            <label for="phone">Telefono</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              inputmode="tel"
+              minlength="7"
+              placeholder="+34 600 000 000"
+            />
+          </div>
+
+          <div class="field form-wide">
+            <label for="email">Correo</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="juan@email.com" required />
+          </div>
+
+          <div class="field">
+            <label for="age">Cuantos anos tienes?</label>
+            <input id="age" name="age" type="number" min="14" max="90" value="30" required />
+          </div>
+
+          <div class="field">
+            <label>Genero</label>
+            <div class="choice-row" aria-label="Tu sexo">
+              <label>
+                <input type="radio" id="male" name="sex" value="male" checked />
+                Hombre
+              </label>
+              <label>
+                <input type="radio" id="female" name="sex" value="female" />
+                Mujer
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="height">Cuanto mides?</label>
+            <div class="unit-input">
+              <input id="height" name="height" type="number" min="120" max="230" value="175" required />
+              <span>cm</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="weight">Cuanto pesas?</label>
+            <div class="unit-input">
+              <input id="weight" name="weight" type="number" min="35" max="250" step="0.1" value="78" required />
+              <span>kg</span>
+            </div>
+          </div>
+
+          <div class="field form-wide">
+            <label for="activity">Cual es tu nivel de actividad fisica diaria?</label>
+            <select id="activity" name="activity">
+              <option value="sedentary">Sedentario</option>
+              <option value="light">Ligero</option>
+              <option value="moderate" selected>Moderado</option>
+              <option value="active">Activo</option>
+              <option value="athlete">Muy activo</option>
+            </select>
+          </div>
+
+          <div class="consent-row form-wide">
+            <input id="privacyConsent" name="privacyConsent" type="checkbox" required />
+            <span>
+              <label for="privacyConsent">He leido y acepto la</label>
+              <button type="button" id="termsButton" class="terms-link">politica de privacidad y terminos</button>
+              <label for="privacyConsent">y el tratamiento de mis datos.</label>
+            </span>
+          </div>
+
+          <div class="form-actions form-wide">
+            <button type="submit" id="calculateButton" class="primary-action" disabled>
+              Calcular ahora
+              <i data-lucide="arrow-right"></i>
+            </button>
+            <button type="button" id="resetButton" class="secondary-action" aria-label="Reiniciar calculadora">
+              <i data-lucide="rotate-ccw"></i>
+            </button>
+          </div>
+        </form>
+
+        <section id="resultsPanel" class="results-panel is-hidden" aria-label="Resultado de edad metabolica">
+          <div class="result-main">
+            <div>
+              <p class="eyebrow">Edad metabolica estimada</p>
+              <div class="age-line">
+                <span id="metabolicAge">30</span>
+                <small>anos</small>
+              </div>
+            </div>
+            <div class="result-pill" id="metabolicBadge">En equilibrio</div>
+          </div>
+
+          <div class="summary-grid">
+            <article class="metric-card">
+              <p>Edad real</p>
+              <strong><span id="chronologicalAge">30</span></strong>
+              <small>anos cronologicos</small>
+            </article>
+            <article class="metric-card">
+              <p>Metabolismo basal</p>
+              <strong><span id="bmr">1.729</span></strong>
+              <small>kcal/dia</small>
+            </article>
+            <article class="metric-card">
+              <p>IMC</p>
+              <strong><span id="bmi">25,5</span></strong>
+              <small id="bmiLabel">Rango elevado</small>
+            </article>
+          </div>
+
+          <div class="result-note">
+            <div id="ageWheel" class="age-wheel" role="img" aria-label="Indicador visual de edad metabolica">
+              <div class="wheel-core">
+                <span id="ageDelta">0</span>
+                <small>anos vs. edad real</small>
+              </div>
+            </div>
+            <div>
+              <h2 id="resultTitle">Metabolismo en equilibrio</h2>
+              <p id="resultText">
+                Tu resultado se mantiene cerca de tu edad cronologica. La actividad y los habitos diarios pueden moverlo.
+              </p>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <article class="detail-item">
+              <span>Actividad diaria</span>
+              <strong id="activityLabel">Moderado</strong>
+            </article>
+            <article class="detail-item">
+              <span>Gasto estimado</span>
+              <strong><span id="tdee">2.680</span> kcal</strong>
+            </article>
+            <article class="detail-item">
+              <span>Estado</span>
+              <strong id="statusLabel">Equilibrado</strong>
+            </article>
+            <article class="detail-item">
+              <span>Hidratacion guia</span>
+              <strong><span id="water">2,7</span> L</strong>
+            </article>
+          </div>
+
+          <div class="score-bars">
+            <div class="bar-row">
+              <span>Composicion</span>
+              <div class="bar-track"><div id="bodyScoreBar" class="bar-fill body-fill"></div></div>
+              <strong id="bodyScoreLabel">72%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Actividad</span>
+              <div class="bar-track"><div id="activityScoreBar" class="bar-fill activity-fill"></div></div>
+              <strong id="activityScoreLabel">68%</strong>
+            </div>
+            <div class="bar-row">
+              <span>Vitalidad</span>
+              <div class="bar-track"><div id="vitalityScoreBar" class="bar-fill vitality-fill"></div></div>
+              <strong id="vitalityScoreLabel">70%</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="whatsapp-card" aria-label="Contactar por WhatsApp">
+        <div class="coach-photo" aria-hidden="true">
+          <img src="Jony.jpeg" alt="" />
+        </div>
+        <div class="whatsapp-copy">
+          <h2>Por donde puedo empezar?</h2>
+          <p>
+            Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.
+          </p>
+          <a id="whatsappLink" class="whatsapp-button" href="#" target="_blank" rel="noopener">
+            <i data-lucide="message-circle"></i>
+            Hablar por WhatsApp
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <div id="termsModal" class="modal-backdrop is-hidden" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+      <div class="terms-modal">
+        <button type="button" id="termsCloseButton" class="modal-close" aria-label="Cerrar terminos">
+          <i data-lucide="x"></i>
+        </button>
+        <p class="eyebrow">Aviso legal</p>
+        <h2 id="termsTitle">Terminos y privacidad</h2>
+        <div class="terms-content">
+          <p>
+            Estos textos son provisionales. La calculadora ofrece una estimacion orientativa y no sustituye una
+            valoracion medica, nutricional o deportiva profesional.
+          </p>
+          <p>
+            Al enviar el formulario aceptas que los datos introducidos puedan utilizarse para calcular tu resultado y
+            contactarte con informacion relacionada con planes, asesoramiento o seguimiento.
+          </p>
+          <p>
+            Tus datos no deberian compartirse con terceros salvo obligacion legal o proveedores necesarios para prestar
+            el servicio. Puedes solicitar acceso, rectificacion o eliminacion de tus datos.
+          </p>
+        </div>
+        <button type="button" id="termsAcceptButton" class="primary-action modal-accept">Aceptar terminos</button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
