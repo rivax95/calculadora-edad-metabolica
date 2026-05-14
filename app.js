@@ -9,6 +9,7 @@ const defaults = {
 
 const WHATSAPP_PHONE = "34623243958";
 const EMAIL_ENDPOINT = "/api/send-result";
+const TERMS_VERSION = "2026-05-14-v1";
 const DEFAULT_WHATSAPP_MESSAGE = "Hola, quiero información sobre los planes después de usar la calculadora de edad metabólica.";
 
 const activityProfiles = {
@@ -57,6 +58,7 @@ const emailStatusAcceptButton = document.querySelector("#emailStatusAcceptButton
 const emailStatusEyebrow = document.querySelector("#emailStatusEyebrow");
 const emailStatusTitle = document.querySelector("#emailStatusTitle");
 const emailStatusText = document.querySelector("#emailStatusText");
+const termsVersionLabel = document.querySelector("#termsVersionLabel");
 
 const fields = {
   fullName: document.querySelector("#fullName"),
@@ -119,6 +121,7 @@ function getFormData() {
     fullName: fields.fullName.value.trim(),
     phone: fields.phone.value.trim(),
     email: fields.email.value.trim(),
+    termsVersion: TERMS_VERSION,
     sex: getSex(),
     age: clampNumber(fields.age.value, 14, 90),
     height: clampNumber(fields.height.value, 120, 230),
@@ -431,6 +434,10 @@ document.addEventListener("keydown", (event) => {
 
 if (window.lucide) {
   window.lucide.createIcons();
+}
+
+if (termsVersionLabel) {
+  termsVersionLabel.textContent = TERMS_VERSION;
 }
 
 hideResults();

@@ -1,5 +1,23 @@
 create extension if not exists pgcrypto;
 
+create table if not exists public.terms_versions (
+  version text primary key,
+  title text not null,
+  content text not null,
+  effective_from timestamptz not null default now(),
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+insert into public.terms_versions (version, title, content, active)
+values (
+  '2026-05-14-v1',
+  'Terminos y privacidad v1',
+  'Textos provisionales de politica de privacidad, terminos y tratamiento de datos aceptados en la calculadora de edad metabolica.',
+  true
+)
+on conflict (version) do nothing;
+
 create table if not exists public.metabolic_results (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -24,6 +42,7 @@ create table if not exists public.metabolic_results (
   result_title text not null,
   result_text text not null,
   consent_accepted boolean not null default true,
+  terms_version text not null default '2026-05-14-v1' references public.terms_versions(version),
   email_sent boolean not null default false,
   resend_email_id text,
   email_error text,
@@ -31,6 +50,8 @@ create table if not exists public.metabolic_results (
 );
 
 alter table public.metabolic_results enable row level security;
+alter table public.terms_versions enable row level security;
 
 create index if not exists metabolic_results_created_at_idx on public.metabolic_results (created_at desc);
 create index if not exists metabolic_results_email_idx on public.metabolic_results (email);
+create index if not exists metabolic_results_terms_version_idx on public.metabolic_results (terms_version);

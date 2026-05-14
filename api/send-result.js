@@ -32,6 +32,7 @@ function buildResultEmail(data, result) {
   const badge = escapeHtml(result.copy?.badge || "Resultado");
   const title = escapeHtml(result.copy?.title || "Tu edad metabólica");
   const text = escapeHtml(result.copy?.text || "Este resultado es una estimación orientativa.");
+  const termsVersion = escapeHtml(data.termsVersion || "2026-05-14-v1");
 
   return `<!doctype html>
 <html lang="es">
@@ -100,7 +101,7 @@ function buildResultEmail(data, result) {
             <tr>
               <td style="padding:22px 30px;background:#111;color:#fff;">
                 <div style="font-weight:900;margin-bottom:8px;">Datos de contacto</div>
-                <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Teléfono: ${phone}</div>
+                <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Teléfono: ${phone}<br>Términos aceptados: ${termsVersion}</div>
               </td>
             </tr>
           </table>
@@ -137,6 +138,7 @@ function buildDatabaseRecord(data, result, emailMeta = {}) {
     result_title: result.copy?.title || "Tu edad metabólica",
     result_text: result.copy?.text || "Resultado orientativo.",
     consent_accepted: true,
+    terms_version: data.termsVersion || "2026-05-14-v1",
     email_sent: Boolean(emailMeta.emailSent),
     resend_email_id: emailMeta.resendEmailId || null,
     email_error: emailMeta.emailError || null,
@@ -220,7 +222,7 @@ module.exports = async function handler(req, res) {
   try {
     const { data, result } = parseBody(req);
 
-    if (!data?.email || !data?.fullName || !result?.metabolicAge) {
+    if (!data?.email || !data?.fullName || !data?.termsVersion || !result?.metabolicAge) {
       return res.status(400).json({ error: "Faltan datos para enviar el resultado." });
     }
 

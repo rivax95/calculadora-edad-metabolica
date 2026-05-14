@@ -701,6 +701,17 @@ input[type="number"]::-webkit-outer-spin-button {
   line-height: 0.96;
 }
 
+.terms-version {
+  margin: -4px 0 18px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.terms-version strong {
+  color: var(--ink);
+}
+
 .terms-content {
   display: grid;
   gap: 12px;
