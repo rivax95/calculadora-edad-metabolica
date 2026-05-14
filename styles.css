@@ -591,6 +591,10 @@ input[type="number"]::-webkit-outer-spin-button {
   padding: clamp(24px, 5vw, 44px);
 }
 
+.whatsapp-card.is-hidden {
+  display: none;
+}
+
 .coach-photo {
   position: relative;
   z-index: 1;

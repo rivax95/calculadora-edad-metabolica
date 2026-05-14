@@ -67,6 +67,7 @@ const emailStatusText = document.querySelector("#emailStatusText");
 const termsTitle = document.querySelector("#termsTitle");
 const termsContent = document.querySelector("#termsContent");
 const termsVersionLabel = document.querySelector("#termsVersionLabel");
+const whatsappSection = document.querySelector("#whatsappSection");
 
 const fields = {
   fullName: document.querySelector("#fullName"),
@@ -116,6 +117,7 @@ const decimalFormatter = new Intl.NumberFormat("es-ES", {
 let hasCalculated = false;
 let latestResult = null;
 let currentTerms = FALLBACK_TERMS;
+let shouldScrollToWhatsapp = false;
 
 function getSex() {
   return form.querySelector('input[name="sex"]:checked').value;
@@ -280,9 +282,14 @@ function showEmailStatusModal({ eyebrow, title, text, isError = false }) {
   emailStatusAcceptButton.focus();
 }
 
-function closeEmailStatusModal() {
+function closeEmailStatusModal({ scrollToWhatsapp = false } = {}) {
   emailStatusModal.classList.add("is-hidden");
   calculateButton.focus();
+
+  if (scrollToWhatsapp && shouldScrollToWhatsapp && whatsappSection) {
+    shouldScrollToWhatsapp = false;
+    whatsappSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function renderTerms(terms) {
@@ -380,6 +387,8 @@ function resetForm() {
   fields.weight.value = defaults.weight;
   fields.activity.value = defaults.activity;
   hideResults();
+  whatsappSection.classList.add("is-hidden");
+  shouldScrollToWhatsapp = false;
   updateWhatsappLink(getFormData(), null);
   refreshSubmitState();
 }
@@ -395,6 +404,7 @@ form.addEventListener("submit", async (event) => {
   hasCalculated = true;
   const { data, result } = render();
   hideResults();
+  whatsappSection.classList.remove("is-hidden");
 
   calculateButton.disabled = true;
 
@@ -405,6 +415,7 @@ form.addEventListener("submit", async (event) => {
       title: "Revisa tu correo",
       text: `Te hemos enviado el resumen de tu edad metabólica a ${data.email}.`,
     });
+    shouldScrollToWhatsapp = true;
   } catch (error) {
     showResults();
     showEmailStatusModal({
@@ -413,6 +424,7 @@ form.addEventListener("submit", async (event) => {
       text: "Hemos calculado tu resultado, pero el envío por correo necesita que Supabase y Resend estén configurados en el servidor.",
       isError: true,
     });
+    shouldScrollToWhatsapp = false;
   } finally {
     refreshSubmitState();
   }
@@ -447,7 +459,9 @@ termsAcceptButton.addEventListener("click", () => {
   }
 });
 emailStatusCloseButton.addEventListener("click", closeEmailStatusModal);
-emailStatusAcceptButton.addEventListener("click", closeEmailStatusModal);
+emailStatusAcceptButton.addEventListener("click", () => {
+  closeEmailStatusModal({ scrollToWhatsapp: true });
+});
 
 termsModal.addEventListener("click", (event) => {
   if (event.target === termsModal) {
@@ -476,6 +490,7 @@ if (window.lucide) {
 }
 
 hideResults();
+whatsappSection.classList.add("is-hidden");
 updateWhatsappLink(getFormData(), null);
 refreshSubmitState();
 preloadTerms();
