@@ -8,9 +8,13 @@ GitHub Pages no sirve para el envio de correo ni para guardar en Supabase porque
 1. Crea un proyecto gratuito en Supabase.
 2. Entra en SQL Editor.
 3. Ejecuta el contenido de `database/schema.sql`.
-4. Ve a Project Settings > API y copia:
-   - Project URL
-   - service_role key
+4. En el menu lateral de Supabase, entra en Project Settings.
+5. Dentro de Project Settings, abre el apartado API.
+6. En API Settings copia:
+   - Project URL: aparece en la seccion Project URL.
+   - service_role key: aparece en la seccion Project API keys. Usa la clave llamada `service_role` o `service_role secret`.
+
+Importante: no uses la `anon public key` para el backend. Para insertar desde `api/send-result.js` usamos la `service_role key` porque se ejecuta en Vercel, no en el navegador.
 
 La tabla que se crea se llama `metabolic_results`.
 
