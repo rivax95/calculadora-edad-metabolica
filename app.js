@@ -352,7 +352,7 @@ form.addEventListener("submit", async (event) => {
 
   hasCalculated = true;
   const { data, result } = render();
-  showResults();
+  hideResults();
 
   calculateButton.disabled = true;
 
@@ -364,6 +364,7 @@ form.addEventListener("submit", async (event) => {
       text: `Te hemos enviado el resumen de tu edad metabolica a ${data.email}.`,
     });
   } catch (error) {
+    showResults();
     showEmailStatusModal({
       eyebrow: "Resultado guardado",
       title: "Correo pendiente",
