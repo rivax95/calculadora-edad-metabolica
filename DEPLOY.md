@@ -14,6 +14,12 @@ GitHub Pages no sirve para el envio de correo ni para guardar en Supabase porque
    - Project URL: aparece en la seccion Project URL.
    - service_role key: aparece en la seccion Project API keys. Usa la clave llamada `service_role` o `service_role secret`.
 
+La `SUPABASE_URL` debe tener este formato, sin `/rest/v1` al final:
+
+```env
+SUPABASE_URL=https://tu-proyecto.supabase.co
+```
+
 Importante: no uses la `anon public key` para el backend. Para insertar desde `api/send-result.js` usamos la `service_role key` porque se ejecuta en Vercel, no en el navegador.
 
 La tabla que se crea se llama `metabolic_results`.
