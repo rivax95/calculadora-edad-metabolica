@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculadora de edad metabolica</title>
+    <title>Calculadora de edad metabólica</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -14,9 +14,9 @@
   </head>
   <body>
     <main class="app-shell">
-      <header class="page-title" aria-label="Calculadora de edad metabolica">
+      <header class="page-title" aria-label="Calculadora de edad metabólica">
         <span>Calculadora de edad</span>
-        <strong>metabolica</strong>
+        <strong>metabólica</strong>
       </header>
 
       <section class="calculator-card">
@@ -25,22 +25,22 @@
         </div>
 
         <div class="card-heading">
-          <p class="eyebrow">Medicion automatica</p>
+          <p class="eyebrow">Medición automática</p>
           <h1>Empecemos</h1>
           <p>
-            Tu edad metabolica mide como tu dieta y estilo de vida afectan tu salud, a diferencia de tu edad
-            cronologica.
+            Tu edad metabólica mide cómo tu dieta y estilo de vida afectan tu salud, a diferencia de tu edad
+            cronológica.
           </p>
         </div>
 
         <form id="metabolicForm" class="form-grid">
           <div class="field">
-            <label for="fullName">Como te llamas?</label>
+            <label for="fullName">¿Cómo te llamas?</label>
             <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Juan" required />
           </div>
 
           <div class="field">
-            <label for="phone">Telefono</label>
+            <label for="phone">Teléfono</label>
             <input
               id="phone"
               name="phone"
@@ -58,12 +58,12 @@
           </div>
 
           <div class="field">
-            <label for="age">Cuantos anos tienes?</label>
+            <label for="age">¿Cuántos años tienes?</label>
             <input id="age" name="age" type="number" min="14" max="90" value="30" required />
           </div>
 
           <div class="field">
-            <label>Genero</label>
+            <label>Género</label>
             <div class="choice-row" aria-label="Tu sexo">
               <label>
                 <input type="radio" id="male" name="sex" value="male" checked />
@@ -77,7 +77,7 @@
           </div>
 
           <div class="field">
-            <label for="height">Cuanto mides?</label>
+            <label for="height">¿Cuánto mides?</label>
             <div class="unit-input">
               <input id="height" name="height" type="number" min="120" max="230" value="175" required />
               <span>cm</span>
@@ -85,7 +85,7 @@
           </div>
 
           <div class="field">
-            <label for="weight">Cuanto pesas?</label>
+            <label for="weight">¿Cuánto pesas?</label>
             <div class="unit-input">
               <input id="weight" name="weight" type="number" min="35" max="250" step="0.1" value="78" required />
               <span>kg</span>
@@ -93,7 +93,7 @@
           </div>
 
           <div class="field form-wide">
-            <label for="activity">Cual es tu nivel de actividad fisica diaria?</label>
+            <label for="activity">¿Cuál es tu nivel de actividad física diaria?</label>
             <select id="activity" name="activity">
               <option value="sedentary">Sedentario</option>
               <option value="light">Ligero</option>
@@ -106,8 +106,8 @@
           <div class="consent-row form-wide">
             <input id="privacyConsent" name="privacyConsent" type="checkbox" required />
             <span>
-              <label for="privacyConsent">He leido y acepto la</label>
-              <button type="button" id="termsButton" class="terms-link">politica de privacidad y terminos</button>
+              <label for="privacyConsent">He leído y acepto la</label>
+              <button type="button" id="termsButton" class="terms-link">política de privacidad y términos</button>
               <label for="privacyConsent">y el tratamiento de mis datos.</label>
             </span>
           </div>
@@ -123,13 +123,13 @@
           </div>
         </form>
 
-        <section id="resultsPanel" class="results-panel is-hidden" aria-label="Resultado de edad metabolica">
+        <section id="resultsPanel" class="results-panel is-hidden" aria-label="Resultado de edad metabólica">
           <div class="result-main">
             <div>
-              <p class="eyebrow">Edad metabolica estimada</p>
+              <p class="eyebrow">Edad metabólica estimada</p>
               <div class="age-line">
                 <span id="metabolicAge">30</span>
-                <small>anos</small>
+                <small>años</small>
               </div>
             </div>
             <div class="result-pill" id="metabolicBadge">En equilibrio</div>
@@ -139,7 +139,7 @@
             <article class="metric-card">
               <p>Edad real</p>
               <strong><span id="chronologicalAge">30</span></strong>
-              <small>anos cronologicos</small>
+              <small>años cronológicos</small>
             </article>
             <article class="metric-card">
               <p>Metabolismo basal</p>
@@ -154,16 +154,16 @@
           </div>
 
           <div class="result-note">
-            <div id="ageWheel" class="age-wheel" role="img" aria-label="Indicador visual de edad metabolica">
+            <div id="ageWheel" class="age-wheel" role="img" aria-label="Indicador visual de edad metabólica">
               <div class="wheel-core">
                 <span id="ageDelta">0</span>
-                <small>anos vs. edad real</small>
+                <small>años vs. edad real</small>
               </div>
             </div>
             <div>
               <h2 id="resultTitle">Metabolismo en equilibrio</h2>
               <p id="resultText">
-                Tu resultado se mantiene cerca de tu edad cronologica. La actividad y los habitos diarios pueden moverlo.
+                Tu resultado se mantiene cerca de tu edad cronológica. La actividad y los hábitos diarios pueden moverlo.
               </p>
             </div>
           </div>
@@ -182,7 +182,7 @@
               <strong id="statusLabel">Equilibrado</strong>
             </article>
             <article class="detail-item">
-              <span>Hidratacion guia</span>
+              <span>Hidratación guía</span>
               <strong><span id="water">2,7</span> L</strong>
             </article>
           </div>
@@ -212,7 +212,7 @@
           <img src="Jony.jpeg" alt="" />
         </div>
         <div class="whatsapp-copy">
-          <h2>Por donde puedo empezar?</h2>
+          <h2>¿Por dónde puedo empezar?</h2>
           <p>
             Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.
           </p>
@@ -226,26 +226,26 @@
 
     <div id="termsModal" class="modal-backdrop is-hidden" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
       <div class="terms-modal">
-        <button type="button" id="termsCloseButton" class="modal-close" aria-label="Cerrar terminos">
+        <button type="button" id="termsCloseButton" class="modal-close" aria-label="Cerrar términos">
           <i data-lucide="x"></i>
         </button>
         <p class="eyebrow">Aviso legal</p>
-        <h2 id="termsTitle">Terminos y privacidad</h2>
+        <h2 id="termsTitle">Términos y privacidad</h2>
         <div class="terms-content">
           <p>
-            Estos textos son provisionales. La calculadora ofrece una estimacion orientativa y no sustituye una
-            valoracion medica, nutricional o deportiva profesional.
+            Estos textos son provisionales. La calculadora ofrece una estimación orientativa y no sustituye una
+            valoración médica, nutricional o deportiva profesional.
           </p>
           <p>
             Al enviar el formulario aceptas que los datos introducidos puedan utilizarse para calcular tu resultado y
-            contactarte con informacion relacionada con planes, asesoramiento o seguimiento.
+            contactarte con información relacionada con planes, asesoramiento o seguimiento.
           </p>
           <p>
-            Tus datos no deberian compartirse con terceros salvo obligacion legal o proveedores necesarios para prestar
-            el servicio. Puedes solicitar acceso, rectificacion o eliminacion de tus datos.
+            Tus datos no deberían compartirse con terceros salvo obligación legal o proveedores necesarios para prestar
+            el servicio. Puedes solicitar acceso, rectificación o eliminación de tus datos.
           </p>
         </div>
-        <button type="button" id="termsAcceptButton" class="primary-action modal-accept">Aceptar terminos</button>
+        <button type="button" id="termsAcceptButton" class="primary-action modal-accept">Aceptar términos</button>
       </div>
     </div>
 
@@ -263,7 +263,7 @@
         <p class="eyebrow" id="emailStatusEyebrow">Resultado enviado</p>
         <h2 id="emailStatusTitle">Revisa tu correo</h2>
         <p id="emailStatusText">
-          Te hemos enviado un email con el resumen de tu edad metabolica y los principales indicadores.
+          Te hemos enviado un email con el resumen de tu edad metabólica y los principales indicadores.
         </p>
         <button type="button" id="emailStatusAcceptButton" class="primary-action modal-accept">Entendido</button>
       </div>

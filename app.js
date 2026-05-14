@@ -9,7 +9,7 @@ const defaults = {
 
 const WHATSAPP_PHONE = "34623243958";
 const EMAIL_ENDPOINT = "/api/send-result";
-const DEFAULT_WHATSAPP_MESSAGE = "Hola, quiero informacion sobre los planes despues de usar la calculadora de edad metabolica.";
+const DEFAULT_WHATSAPP_MESSAGE = "Hola, quiero información sobre los planes después de usar la calculadora de edad metabólica.";
 
 const activityProfiles = {
   sedentary: {
@@ -151,10 +151,10 @@ function getBodyScore(bmi) {
 function getResultCopy(delta) {
   if (delta <= -5) {
     return {
-      badge: "Mas joven",
+      badge: "Más joven",
       status: "Muy favorable",
       title: "Tu metabolismo apunta joven",
-      text: "Tu actividad y composicion estimada colocan tu edad metabolica por debajo de tu edad real.",
+      text: "Tu actividad y composición estimada colocan tu edad metabólica por debajo de tu edad real.",
     };
   }
 
@@ -163,24 +163,24 @@ function getResultCopy(delta) {
       badge: "En equilibrio",
       status: "Equilibrado",
       title: "Metabolismo en equilibrio",
-      text: "Tu resultado se mantiene cerca de tu edad cronologica. La actividad y los habitos diarios pueden moverlo a mejor o peor.",
+      text: "Tu resultado se mantiene cerca de tu edad cronológica. La actividad y los hábitos diarios pueden moverlo a mejor o peor.",
     };
   }
 
   if (delta <= 7) {
     return {
       badge: "Mejorable",
-      status: "Atencion suave",
+      status: "Atención suave",
       title: "Hay margen para rejuvenecer",
-      text: "Tu edad metabolica queda algo por encima de tu edad real. Mas movimiento diario y una composicion corporal saludable pueden ayudar.",
+      text: "Tu edad metabólica queda algo por encima de tu edad real. Más movimiento diario y una composición corporal saludable pueden ayudar.",
     };
   }
 
   return {
     badge: "Prioridad alta",
-    status: "Revisar habitos",
+    status: "Revisar hábitos",
     title: "Tu metabolismo pide cuidado",
-    text: "La estimacion queda claramente por encima de tu edad real. Conviene revisar actividad, descanso, alimentacion y seguimiento profesional si aplica.",
+    text: "La estimación queda claramente por encima de tu edad real. Conviene revisar actividad, descanso, alimentación y seguimiento profesional si aplica.",
   };
 }
 
@@ -239,7 +239,7 @@ function createWhatsappUrl(message) {
 
 function updateWhatsappLink(data, result) {
   const message = result
-    ? `Hola, soy ${data.fullName}. Acabo de calcular mi edad metabolica. Tengo ${data.age} años, mi resultado estimado es ${result.metabolicAge} años y quiero saber por donde empezar.`
+    ? `Hola, soy ${data.fullName}. Acabo de calcular mi edad metabólica. Tengo ${data.age} años, mi resultado estimado es ${result.metabolicAge} años y quiero saber por dónde empezar.`
     : DEFAULT_WHATSAPP_MESSAGE;
 
   output.whatsappLink.href = createWhatsappUrl(message);
@@ -361,14 +361,14 @@ form.addEventListener("submit", async (event) => {
     showEmailStatusModal({
       eyebrow: "Resultado enviado",
       title: "Revisa tu correo",
-      text: `Te hemos enviado el resumen de tu edad metabolica a ${data.email}.`,
+      text: `Te hemos enviado el resumen de tu edad metabólica a ${data.email}.`,
     });
   } catch (error) {
     showResults();
     showEmailStatusModal({
       eyebrow: "Resultado guardado",
       title: "Correo pendiente",
-      text: "Hemos calculado tu resultado, pero el envio por correo necesita que Supabase y Resend esten configurados en el servidor.",
+      text: "Hemos calculado tu resultado, pero el envío por correo necesita que Supabase y Resend estén configurados en el servidor.",
       isError: true,
     });
   } finally {

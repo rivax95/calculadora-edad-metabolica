@@ -30,15 +30,15 @@ function buildResultEmail(data, result) {
   const metabolicAge = escapeHtml(result.metabolicAge);
   const realAge = escapeHtml(data.age);
   const badge = escapeHtml(result.copy?.badge || "Resultado");
-  const title = escapeHtml(result.copy?.title || "Tu edad metabolica");
-  const text = escapeHtml(result.copy?.text || "Este resultado es una estimacion orientativa.");
+  const title = escapeHtml(result.copy?.title || "Tu edad metabólica");
+  const text = escapeHtml(result.copy?.text || "Este resultado es una estimación orientativa.");
 
   return `<!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Resultado de edad metabolica</title>
+    <title>Resultado de edad metabólica</title>
   </head>
   <body style="margin:0;background:#f1f1f1;font-family:Arial,Helvetica,sans-serif;color:#151515;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f1f1f1;padding:28px 12px;">
@@ -48,7 +48,7 @@ function buildResultEmail(data, result) {
             <tr>
               <td style="padding:34px 30px 18px;text-align:center;">
                 <div style="display:inline-block;background:#111;color:#fff;font-weight:900;text-transform:uppercase;padding:6px 12px;border-radius:4px;font-size:12px;">${badge}</div>
-                <h1 style="margin:18px 0 8px;font-size:38px;line-height:0.95;text-transform:uppercase;">Resultado de edad metabolica</h1>
+                <h1 style="margin:18px 0 8px;font-size:38px;line-height:0.95;text-transform:uppercase;">Resultado de edad metabólica</h1>
                 <p style="margin:0;color:#6d6d6d;font-size:16px;font-weight:700;">Hola ${name}, este es el resumen de tu calculadora.</p>
               </td>
             </tr>
@@ -57,9 +57,9 @@ function buildResultEmail(data, result) {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f7f7f7;border-radius:18px;border:1px solid #e8e8e8;">
                   <tr>
                     <td style="padding:26px;text-align:center;">
-                      <div style="color:#777;font-size:12px;font-weight:900;text-transform:uppercase;">Edad metabolica estimada</div>
-                      <div style="font-size:82px;line-height:0.9;font-weight:900;margin-top:8px;">${metabolicAge}<span style="font-size:18px;color:#777;margin-left:8px;">anos</span></div>
-                      <div style="margin-top:12px;color:#777;font-weight:800;">Edad cronologica: ${realAge} anos</div>
+                      <div style="color:#777;font-size:12px;font-weight:900;text-transform:uppercase;">Edad metabólica estimada</div>
+                      <div style="font-size:82px;line-height:0.9;font-weight:900;margin-top:8px;">${metabolicAge}<span style="font-size:18px;color:#777;margin-left:8px;">años</span></div>
+                      <div style="margin-top:12px;color:#777;font-weight:800;">Edad cronológica: ${realAge} años</div>
                     </td>
                   </tr>
                 </table>
@@ -100,12 +100,12 @@ function buildResultEmail(data, result) {
             <tr>
               <td style="padding:22px 30px;background:#111;color:#fff;">
                 <div style="font-weight:900;margin-bottom:8px;">Datos de contacto</div>
-                <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Telefono: ${phone}</div>
+                <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Teléfono: ${phone}</div>
               </td>
             </tr>
           </table>
           <p style="max-width:680px;margin:16px auto 0;color:#777;font-size:12px;line-height:1.5;">
-            Este correo contiene una estimacion orientativa y no sustituye una valoracion profesional.
+            Este correo contiene una estimación orientativa y no sustituye una valoración profesional.
           </p>
         </td>
       </tr>
@@ -134,7 +134,7 @@ function buildDatabaseRecord(data, result, emailMeta = {}) {
     activity_score: Number(result.activityScore),
     vitality_score: Number(result.vitalityScore),
     result_badge: result.copy?.badge || "Resultado",
-    result_title: result.copy?.title || "Tu edad metabolica",
+    result_title: result.copy?.title || "Tu edad metabólica",
     result_text: result.copy?.text || "Resultado orientativo.",
     consent_accepted: true,
     email_sent: Boolean(emailMeta.emailSent),
@@ -185,7 +185,7 @@ async function sendResultEmail(data, result) {
     body: JSON.stringify({
       from: process.env.RESEND_FROM_EMAIL || "Calculadora <onboarding@resend.dev>",
       to: [data.email],
-      subject: "Tu resultado de edad metabolica",
+        subject: "Tu resultado de edad metabólica",
       html: buildResultEmail(data, result),
     }),
   });
