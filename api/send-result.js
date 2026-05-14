@@ -1,4 +1,5 @@
 const RESEND_API_URL = "https://api.resend.com/emails";
+const SUPABASE_TABLE = "metabolic_results";
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -113,6 +114,91 @@ function buildResultEmail(data, result) {
 </html>`;
 }
 
+function buildDatabaseRecord(data, result, emailMeta = {}) {
+  return {
+    full_name: data.fullName,
+    email: data.email,
+    phone: data.phone || null,
+    sex: data.sex,
+    chronological_age: Number(data.age),
+    weight_kg: Number(data.weight),
+    height_cm: Number(data.height),
+    activity: data.activity,
+    metabolic_age: Number(result.metabolicAge),
+    age_delta: Number(result.delta),
+    bmr: Number(result.bmr),
+    bmi: Number(result.bmi),
+    tdee: Number(result.tdee),
+    water_l: Number(result.water),
+    body_score: Number(result.bodyScore),
+    activity_score: Number(result.activityScore),
+    vitality_score: Number(result.vitalityScore),
+    result_badge: result.copy?.badge || "Resultado",
+    result_title: result.copy?.title || "Tu edad metabolica",
+    result_text: result.copy?.text || "Resultado orientativo.",
+    consent_accepted: true,
+    email_sent: Boolean(emailMeta.emailSent),
+    resend_email_id: emailMeta.resendEmailId || null,
+    email_error: emailMeta.emailError || null,
+    user_agent: data.userAgent || null,
+  };
+}
+
+async function saveToSupabase(record) {
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Falta configurar SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY.");
+  }
+
+  const supabaseUrl = process.env.SUPABASE_URL.replace(/\/$/, "");
+  const response = await fetch(`${supabaseUrl}/rest/v1/${SUPABASE_TABLE}`, {
+    method: "POST",
+    headers: {
+      apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify(record),
+  });
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.hint || "No se pudo guardar en Supabase.";
+    throw new Error(message);
+  }
+
+  return Array.isArray(payload) ? payload[0] : payload;
+}
+
+async function sendResultEmail(data, result) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("Falta configurar RESEND_API_KEY.");
+  }
+
+  const response = await fetch(RESEND_API_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: process.env.RESEND_FROM_EMAIL || "Calculadora <onboarding@resend.dev>",
+      to: [data.email],
+      subject: "Tu resultado de edad metabolica",
+      html: buildResultEmail(data, result),
+    }),
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok) {
+    throw new Error(payload?.message || "Resend no pudo enviar el correo.");
+  }
+
+  return payload;
+}
+
 function setCorsHeaders(res) {
   res.setHeader("Access-Control-Allow-Origin", process.env.ALLOWED_ORIGIN || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -131,10 +217,6 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Metodo no permitido." });
   }
 
-  if (!process.env.RESEND_API_KEY) {
-    return res.status(500).json({ error: "Falta configurar RESEND_API_KEY." });
-  }
-
   try {
     const { data, result } = parseBody(req);
 
@@ -142,30 +224,46 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Faltan datos para enviar el resultado." });
     }
 
-    const response = await fetch(RESEND_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: process.env.RESEND_FROM_EMAIL || "Calculadora <onboarding@resend.dev>",
-        to: [data.email],
-        subject: "Tu resultado de edad metabolica",
-        html: buildResultEmail(data, result),
-      }),
-    });
+    const enrichedData = {
+      ...data,
+      userAgent: req.headers["user-agent"] || null,
+    };
 
-    const payload = await response.json();
+    let emailMeta = { emailSent: false };
+    let emailError = null;
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: payload?.message || "Resend no pudo enviar el correo.",
+    try {
+      const emailPayload = await sendResultEmail(enrichedData, result);
+      emailMeta = {
+        emailSent: true,
+        resendEmailId: emailPayload.id,
+      };
+    } catch (error) {
+      emailError = error.message;
+      emailMeta = {
+        emailSent: false,
+        emailError,
+      };
+    }
+
+    const savedRecord = await saveToSupabase(buildDatabaseRecord(enrichedData, result, emailMeta));
+
+    if (emailError) {
+      return res.status(502).json({
+        ok: false,
+        saved: true,
+        id: savedRecord?.id,
+        error: emailError,
       });
     }
 
-    return res.status(200).json({ ok: true, id: payload.id });
+    return res.status(200).json({
+      ok: true,
+      saved: true,
+      id: savedRecord?.id,
+      emailId: emailMeta.resendEmailId,
+    });
   } catch (error) {
-    return res.status(500).json({ error: "Error inesperado enviando el correo." });
+    return res.status(500).json({ error: error.message || "Error inesperado guardando el resultado." });
   }
 };

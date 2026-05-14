@@ -239,7 +239,7 @@ function createWhatsappUrl(message) {
 
 function updateWhatsappLink(data, result) {
   const message = result
-    ? `Hola, soy ${data.fullName}. Acabo de calcular mi edad metabolica. Tengo ${data.age} anos, mi resultado estimado es ${result.metabolicAge} anos y quiero saber por donde empezar.`
+    ? `Hola, soy ${data.fullName}. Acabo de calcular mi edad metabolica. Tengo ${data.age} años, mi resultado estimado es ${result.metabolicAge} años y quiero saber por donde empezar.`
     : DEFAULT_WHATSAPP_MESSAGE;
 
   output.whatsappLink.href = createWhatsappUrl(message);
@@ -365,9 +365,9 @@ form.addEventListener("submit", async (event) => {
     });
   } catch (error) {
     showEmailStatusModal({
-      eyebrow: "Correo pendiente",
-      title: "No se pudo enviar el email",
-      text: "El resultado se ha calculado, pero el envio por correo necesita que el backend de Resend este desplegado y configurado.",
+      eyebrow: "Resultado guardado",
+      title: "Correo pendiente",
+      text: "Hemos calculado tu resultado, pero el envio por correo necesita que Supabase y Resend esten configurados en el servidor.",
       isError: true,
     });
   } finally {
