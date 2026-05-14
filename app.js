@@ -9,7 +9,13 @@ const defaults = {
 
 const WHATSAPP_PHONE = "34623243958";
 const EMAIL_ENDPOINT = "/api/send-result";
-const TERMS_VERSION = "2026-05-14-v1";
+const TERMS_ENDPOINT = "/api/terms";
+const FALLBACK_TERMS = {
+  version: "2026-05-14-v1",
+  title: "Términos y privacidad",
+  content:
+    "Estos textos son provisionales. La calculadora ofrece una estimación orientativa y no sustituye una valoración médica, nutricional o deportiva profesional.\n\nAl enviar el formulario aceptas que los datos introducidos puedan utilizarse para calcular tu resultado y contactarte con información relacionada con planes, asesoramiento o seguimiento.\n\nTus datos no deberían compartirse con terceros salvo obligación legal o proveedores necesarios para prestar el servicio. Puedes solicitar acceso, rectificación o eliminación de tus datos.",
+};
 const DEFAULT_WHATSAPP_MESSAGE = "Hola, quiero información sobre los planes después de usar la calculadora de edad metabólica.";
 
 const activityProfiles = {
@@ -58,6 +64,8 @@ const emailStatusAcceptButton = document.querySelector("#emailStatusAcceptButton
 const emailStatusEyebrow = document.querySelector("#emailStatusEyebrow");
 const emailStatusTitle = document.querySelector("#emailStatusTitle");
 const emailStatusText = document.querySelector("#emailStatusText");
+const termsTitle = document.querySelector("#termsTitle");
+const termsContent = document.querySelector("#termsContent");
 const termsVersionLabel = document.querySelector("#termsVersionLabel");
 
 const fields = {
@@ -107,6 +115,7 @@ const decimalFormatter = new Intl.NumberFormat("es-ES", {
 
 let hasCalculated = false;
 let latestResult = null;
+let currentTerms = FALLBACK_TERMS;
 
 function getSex() {
   return form.querySelector('input[name="sex"]:checked').value;
@@ -121,7 +130,7 @@ function getFormData() {
     fullName: fields.fullName.value.trim(),
     phone: fields.phone.value.trim(),
     email: fields.email.value.trim(),
-    termsVersion: TERMS_VERSION,
+    termsVersion: currentTerms.version,
     sex: getSex(),
     age: clampNumber(fields.age.value, 14, 90),
     height: clampNumber(fields.height.value, 120, 230),
@@ -274,6 +283,36 @@ function showEmailStatusModal({ eyebrow, title, text, isError = false }) {
 function closeEmailStatusModal() {
   emailStatusModal.classList.add("is-hidden");
   calculateButton.focus();
+}
+
+function renderTerms(terms) {
+  currentTerms = terms || FALLBACK_TERMS;
+  termsTitle.textContent = currentTerms.title;
+  termsVersionLabel.textContent = currentTerms.version;
+  termsContent.innerHTML = "";
+
+  for (const paragraph of currentTerms.content.split(/\n{2,}/).filter(Boolean)) {
+    const element = document.createElement("p");
+    element.textContent = paragraph.trim();
+    termsContent.appendChild(element);
+  }
+}
+
+async function preloadTerms() {
+  renderTerms(FALLBACK_TERMS);
+
+  try {
+    const response = await fetch(TERMS_ENDPOINT);
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !payload.terms) {
+      throw new Error(payload.error || "No se pudieron cargar los términos.");
+    }
+
+    renderTerms(payload.terms);
+  } catch (error) {
+    renderTerms(FALLBACK_TERMS);
+  }
 }
 
 function render() {
@@ -436,10 +475,7 @@ if (window.lucide) {
   window.lucide.createIcons();
 }
 
-if (termsVersionLabel) {
-  termsVersionLabel.textContent = TERMS_VERSION;
-}
-
 hideResults();
 updateWhatsappLink(getFormData(), null);
 refreshSubmitState();
+preloadTerms();
