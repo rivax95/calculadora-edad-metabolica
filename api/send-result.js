@@ -1,5 +1,6 @@
 const RESEND_API_URL = "https://api.resend.com/emails";
 const SUPABASE_TABLE = "metabolic_results";
+const WHATSAPP_PHONE = "34623243958";
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -33,6 +34,10 @@ function buildResultEmail(data, result) {
   const title = escapeHtml(result.copy?.title || "Tu edad metabólica");
   const text = escapeHtml(result.copy?.text || "Este resultado es una estimación orientativa.");
   const termsVersion = escapeHtml(data.termsVersion || "2026-05-14-v1");
+  const whatsappMessage = encodeURIComponent(
+    `Hola, soy ${data.fullName}. He recibido mi resultado de edad metabólica (${result.metabolicAge} años) y quiero saber por dónde empezar.`,
+  );
+  const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
 
   return `<!doctype html>
 <html lang="es">
@@ -102,6 +107,23 @@ function buildResultEmail(data, result) {
               <td style="padding:22px 30px;background:#111;color:#fff;">
                 <div style="font-weight:900;margin-bottom:8px;">Datos de contacto</div>
                 <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Teléfono: ${phone}<br>Términos aceptados: ${termsVersion}</div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:30px;background:#ffffff;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e6e6e6;border-radius:20px;background:#f7f7f7;">
+                  <tr>
+                    <td style="padding:26px;text-align:center;">
+                      <h2 style="margin:0 0 12px;font-size:30px;line-height:1;font-weight:900;">¿Por dónde puedo empezar?</h2>
+                      <p style="margin:0 auto 22px;max-width:460px;color:#686868;font-weight:700;line-height:1.55;">
+                        Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.
+                      </p>
+                      <a href="${whatsappUrl}" style="display:inline-block;background:#ffffff;color:#4f4f4f;border-radius:14px;padding:16px 24px;text-decoration:none;font-weight:900;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,0.12);">
+                        Hablar por WhatsApp
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
           </table>
