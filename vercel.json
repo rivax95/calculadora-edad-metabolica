@@ -1,18 +1,3 @@
 {
-  "version": 2,
-  "functions": {
-    "api/send-result.js": {
-      "runtime": "nodejs22.x"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/send-result",
-      "dest": "/api/send-result.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  "cleanUrls": true
 }
