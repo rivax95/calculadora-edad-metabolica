@@ -26,14 +26,12 @@ function formatNumber(value, digits = 0) {
 
 function buildResultEmail(data, result) {
   const name = escapeHtml(data.fullName);
-  const phone = data.phone ? escapeHtml(data.phone) : "No indicado";
   const email = escapeHtml(data.email);
   const metabolicAge = escapeHtml(result.metabolicAge);
   const realAge = escapeHtml(data.age);
   const badge = escapeHtml(result.copy?.badge || "Resultado");
   const title = escapeHtml(result.copy?.title || "Tu edad metabólica");
   const text = escapeHtml(result.copy?.text || "Este resultado es una estimación orientativa.");
-  const termsVersion = escapeHtml(data.termsVersion || "2026-05-14-v1");
   const whatsappMessage = encodeURIComponent(
     `Hola, soy ${data.fullName}. He recibido mi resultado de edad metabólica (${result.metabolicAge} años) y quiero saber por dónde empezar.`,
   );
@@ -101,12 +99,6 @@ function buildResultEmail(data, result) {
                     </td>
                   </tr>
                 </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:22px 30px;background:#111;color:#fff;">
-                <div style="font-weight:900;margin-bottom:8px;">Datos de contacto</div>
-                <div style="color:#d9d9d9;line-height:1.55;">Nombre: ${name}<br>Email: ${email}<br>Teléfono: ${phone}<br>Términos aceptados: ${termsVersion}</div>
               </td>
             </tr>
             <tr>
