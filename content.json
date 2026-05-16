@@ -65,6 +65,29 @@
     "calculateButton": "Calcular ahora",
     "resetLabel": "Reiniciar calculadora"
   },
+  "formula": {
+    "ageImpacts": {
+      "energyLevel": {
+        "very_low": 3,
+        "low": 1,
+        "stable": 0,
+        "high": -1,
+        "very_high": -2
+      },
+      "sleepQuality": {
+        "poor": 3,
+        "irregular": 1,
+        "normal": 0,
+        "good": -1,
+        "excellent": -2
+      },
+      "stressAnxiety": {
+        "no": -1,
+        "sometimes": 1,
+        "frequent": 3
+      }
+    }
+  },
   "results": {
     "ariaLabel": "Resultado de edad metabólica",
     "eyebrow": "Edad metabólica estimada",

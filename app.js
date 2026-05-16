@@ -55,10 +55,46 @@ const activityProfiles = {
   },
 };
 
+const energyProfiles = {
+  very_low: {
+    ageImpact: 3,
+  },
+  low: {
+    ageImpact: 1,
+  },
+  stable: {
+    ageImpact: 0,
+  },
+  high: {
+    ageImpact: -1,
+  },
+  very_high: {
+    ageImpact: -2,
+  },
+};
+
+const sleepProfiles = {
+  poor: {
+    ageImpact: 3,
+  },
+  irregular: {
+    ageImpact: 1,
+  },
+  normal: {
+    ageImpact: 0,
+  },
+  good: {
+    ageImpact: -1,
+  },
+  excellent: {
+    ageImpact: -2,
+  },
+};
+
 const stressProfiles = {
   no: {
     label: "No, casi nunca",
-    ageImpact: 0,
+    ageImpact: -1,
   },
   sometimes: {
     label: "A veces",
@@ -354,6 +390,16 @@ function getBodyScore(bmi) {
   return Math.round(Math.max(28, Math.min(96, 94 - distanceFromOptimal * 8)));
 }
 
+function getFormulaImpact(group, value, fallbackProfiles) {
+  const configuredImpact = Number(getContent(`formula.ageImpacts.${group}.${value}`));
+
+  if (Number.isFinite(configuredImpact)) {
+    return configuredImpact;
+  }
+
+  return fallbackProfiles[value]?.ageImpact || 0;
+}
+
 function getResultCopy(delta) {
   if (delta <= -5) {
     return getContent("resultCopies.younger", {
@@ -399,8 +445,11 @@ function calculateMetabolicAge(data) {
   const stressProfile = stressProfiles[data.stressAnxiety] || stressProfiles.no;
   const tdee = bmr * profile.multiplier;
   const bmiImpact = getBmiImpact(bmi);
+  const energyImpact = getFormulaImpact("energyLevel", data.energyLevel, energyProfiles);
+  const sleepImpact = getFormulaImpact("sleepQuality", data.sleepQuality, sleepProfiles);
+  const stressImpact = getFormulaImpact("stressAnxiety", data.stressAnxiety, stressProfiles);
   const metabolicAge = Math.round(
-    Math.max(14, Math.min(90, data.age + bmiImpact + profile.ageImpact + stressProfile.ageImpact)),
+    Math.max(14, Math.min(90, data.age + bmiImpact + profile.ageImpact + energyImpact + sleepImpact + stressImpact)),
   );
   const delta = metabolicAge - data.age;
   const bodyScore = getBodyScore(bmi);
