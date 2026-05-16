@@ -1,5 +1,10 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "email-automation/**"
+    }
+  },
   "crons": [
     {
       "path": "/api/run-email-automation",

@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "sequenceKey": "metabolic_followup_v1",
+  "name": "Seguimiento edad metabólica",
+  "maxAttempts": 3,
+  "defaultDelayDays": 2,
+  "whatsappPhone": "34623243958",
+  "senderName": "Calculadora de edad metabólica",
+  "preheader": "Un paso pequeño para mejorar tu energía y bienestar.",
+  "footerText": "Recibes este correo porque calculaste tu edad metabólica y aceptaste recibir información relacionada.",
+  "unsubscribeText": "Cancelar estos correos",
+  "unsubscribeSuccessTitle": "Baja confirmada",
+  "unsubscribeSuccessText": "Ya no recibirás más correos de esta secuencia.",
+  "unsubscribeErrorTitle": "No pudimos confirmar la baja",
+  "unsubscribeErrorText": "El enlace no es válido o ya ha caducado.",
+  "defaultCtaText": "Hablar por WhatsApp",
+  "defaultWhatsappMessage": "Hola, he recibido el correo de seguimiento y quiero saber por dónde empezar."
+}

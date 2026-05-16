@@ -1,4 +1,5 @@
-const { getContent, escapeHtml } = require("./lib/server-utils");
+const { escapeHtml } = require("./lib/server-utils");
+const { getAutomationText } = require("./lib/automation-config");
 const { unsubscribeByToken } = require("./lib/email-automation");
 
 function renderPage({ title, text }) {
@@ -37,8 +38,8 @@ module.exports = async function handler(req, res) {
       res,
       400,
       renderPage({
-        title: getContent("automation.unsubscribeErrorTitle", "No pudimos confirmar la baja"),
-        text: getContent("automation.unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
+        title: getAutomationText("unsubscribeErrorTitle", "No pudimos confirmar la baja"),
+        text: getAutomationText("unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
       }),
     );
   }
@@ -51,8 +52,8 @@ module.exports = async function handler(req, res) {
         res,
         404,
         renderPage({
-          title: getContent("automation.unsubscribeErrorTitle", "No pudimos confirmar la baja"),
-          text: getContent("automation.unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
+          title: getAutomationText("unsubscribeErrorTitle", "No pudimos confirmar la baja"),
+          text: getAutomationText("unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
         }),
       );
     }
@@ -61,8 +62,8 @@ module.exports = async function handler(req, res) {
       res,
       200,
       renderPage({
-        title: getContent("automation.unsubscribeSuccessTitle", "Baja confirmada"),
-        text: getContent("automation.unsubscribeSuccessText", "Ya no recibirás más correos de esta secuencia."),
+        title: getAutomationText("unsubscribeSuccessTitle", "Baja confirmada"),
+        text: getAutomationText("unsubscribeSuccessText", "Ya no recibirás más correos de esta secuencia."),
       }),
     );
   } catch (error) {
@@ -70,8 +71,8 @@ module.exports = async function handler(req, res) {
       res,
       500,
       renderPage({
-        title: getContent("automation.unsubscribeErrorTitle", "No pudimos confirmar la baja"),
-        text: error.message || getContent("automation.unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
+        title: getAutomationText("unsubscribeErrorTitle", "No pudimos confirmar la baja"),
+        text: error.message || getAutomationText("unsubscribeErrorText", "El enlace no es válido o ya ha caducado."),
       }),
     );
   }
