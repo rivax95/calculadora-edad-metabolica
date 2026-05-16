@@ -2,6 +2,7 @@ const RESEND_API_URL = "https://api.resend.com/emails";
 const SUPABASE_TABLE = "metabolic_results";
 const WHATSAPP_PHONE = "34623243958";
 const CONTENT = require("../content.json");
+const { enrollInAutomation } = require("./lib/email-automation");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -292,11 +293,20 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    let automation = { enrolled: false };
+
+    try {
+      automation = await enrollInAutomation({ data: enrichedData, result, savedRecord });
+    } catch (error) {
+      automation = { enrolled: false, error: error.message };
+    }
+
     return res.status(200).json({
       ok: true,
       saved: true,
       id: savedRecord?.id,
       emailId: emailMeta.resendEmailId,
+      automation,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Error inesperado guardando el resultado." });
