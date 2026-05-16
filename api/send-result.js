@@ -1,6 +1,7 @@
 const RESEND_API_URL = "https://api.resend.com/emails";
 const SUPABASE_TABLE = "metabolic_results";
 const WHATSAPP_PHONE = "34623243958";
+const CONTENT = require("../content.json");
 
 function parseBody(req) {
   if (!req.body) return {};
@@ -24,6 +25,15 @@ function formatNumber(value, digits = 0) {
   }).format(Number(value) || 0);
 }
 
+function getContent(path, fallback) {
+  const value = path.split(".").reduce((current, key) => current?.[key], CONTENT);
+  return value ?? fallback;
+}
+
+function formatTemplate(template, values = {}) {
+  return String(template || "").replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
+}
+
 function buildResultEmail(data, result) {
   const name = escapeHtml(data.fullName);
   const email = escapeHtml(data.email);
@@ -32,8 +42,15 @@ function buildResultEmail(data, result) {
   const badge = escapeHtml(result.copy?.badge || "Resultado");
   const title = escapeHtml(result.copy?.title || "Tu edad metabólica");
   const text = escapeHtml(result.copy?.text || "Este resultado es una estimación orientativa.");
+  const emailValues = { fullName: data.fullName, age: data.age, metabolicAge: result.metabolicAge };
   const whatsappMessage = encodeURIComponent(
-    `Hola, soy ${data.fullName}. He recibido mi resultado de edad metabólica (${result.metabolicAge} años) y quiero saber por dónde empezar.`,
+    formatTemplate(
+      getContent(
+        "whatsapp.emailMessage",
+        "Hola, soy {fullName}. He recibido mi resultado de edad metabólica ({metabolicAge} años) y quiero saber por dónde empezar.",
+      ),
+      emailValues,
+    ),
   );
   const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${whatsappMessage}`;
 
@@ -42,7 +59,7 @@ function buildResultEmail(data, result) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Resultado de edad metabólica</title>
+    <title>${escapeHtml(getContent("email.browserTitle", "Resultado de edad metabólica"))}</title>
   </head>
   <body style="margin:0;background:#f1f1f1;font-family:Arial,Helvetica,sans-serif;color:#151515;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f1f1f1;padding:28px 12px;">
@@ -52,8 +69,8 @@ function buildResultEmail(data, result) {
             <tr>
               <td style="padding:34px 30px 18px;text-align:center;">
                 <div style="display:inline-block;background:#111;color:#fff;font-weight:900;text-transform:uppercase;padding:6px 12px;border-radius:4px;font-size:12px;">${badge}</div>
-                <h1 style="margin:18px 0 8px;font-size:38px;line-height:0.95;text-transform:uppercase;">Resultado de edad metabólica</h1>
-                <p style="margin:0;color:#6d6d6d;font-size:16px;font-weight:700;">Hola ${name}, este es el resumen de tu calculadora.</p>
+                <h1 style="margin:18px 0 8px;font-size:38px;line-height:0.95;text-transform:uppercase;">${escapeHtml(getContent("email.headline", "Resultado de edad metabólica"))}</h1>
+                <p style="margin:0;color:#6d6d6d;font-size:16px;font-weight:700;">${escapeHtml(formatTemplate(getContent("email.greeting", "Hola {fullName}, este es el resumen de tu calculadora."), { fullName: data.fullName }))}</p>
               </td>
             </tr>
             <tr>
@@ -61,9 +78,9 @@ function buildResultEmail(data, result) {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f7f7f7;border-radius:18px;border:1px solid #e8e8e8;">
                   <tr>
                     <td style="padding:26px;text-align:center;">
-                      <div style="color:#777;font-size:12px;font-weight:900;text-transform:uppercase;">Edad metabólica estimada</div>
-                      <div style="font-size:82px;line-height:0.9;font-weight:900;margin-top:8px;">${metabolicAge}<span style="font-size:18px;color:#777;margin-left:8px;">años</span></div>
-                      <div style="margin-top:12px;color:#777;font-weight:800;">Edad cronológica: ${realAge} años</div>
+                      <div style="color:#777;font-size:12px;font-weight:900;text-transform:uppercase;">${escapeHtml(getContent("email.estimatedAge", "Edad metabólica estimada"))}</div>
+                      <div style="font-size:82px;line-height:0.9;font-weight:900;margin-top:8px;">${metabolicAge}<span style="font-size:18px;color:#777;margin-left:8px;">${escapeHtml(getContent("email.years", "años"))}</span></div>
+                      <div style="margin-top:12px;color:#777;font-weight:800;">${escapeHtml(formatTemplate(getContent("email.chronologicalAge", "Edad cronológica: {age} años"), { age: realAge }))}</div>
                     </td>
                   </tr>
                 </table>
@@ -81,19 +98,19 @@ function buildResultEmail(data, result) {
                   <tr>
                     <td style="width:33.33%;padding:8px;">
                       <div style="border:1px solid #e6e6e6;border-radius:14px;padding:16px;background:#fff;">
-                        <div style="color:#777;font-size:12px;font-weight:900;">Metabolismo basal</div>
+                        <div style="color:#777;font-size:12px;font-weight:900;">${escapeHtml(getContent("email.bmr", "Metabolismo basal"))}</div>
                         <div style="font-size:24px;font-weight:900;margin-top:8px;">${formatNumber(result.bmr)} kcal</div>
                       </div>
                     </td>
                     <td style="width:33.33%;padding:8px;">
                       <div style="border:1px solid #e6e6e6;border-radius:14px;padding:16px;background:#fff;">
-                        <div style="color:#777;font-size:12px;font-weight:900;">IMC</div>
+                        <div style="color:#777;font-size:12px;font-weight:900;">${escapeHtml(getContent("email.bmi", "IMC"))}</div>
                         <div style="font-size:24px;font-weight:900;margin-top:8px;">${formatNumber(result.bmi, 1)}</div>
                       </div>
                     </td>
                     <td style="width:33.33%;padding:8px;">
                       <div style="border:1px solid #e6e6e6;border-radius:14px;padding:16px;background:#fff;">
-                        <div style="color:#777;font-size:12px;font-weight:900;">Actividad</div>
+                        <div style="color:#777;font-size:12px;font-weight:900;">${escapeHtml(getContent("email.activity", "Actividad"))}</div>
                         <div style="font-size:24px;font-weight:900;margin-top:8px;">${escapeHtml(result.activityLabel)}</div>
                       </div>
                     </td>
@@ -106,12 +123,12 @@ function buildResultEmail(data, result) {
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e6e6e6;border-radius:20px;background:#f7f7f7;">
                   <tr>
                     <td style="padding:26px;text-align:center;">
-                      <h2 style="margin:0 0 12px;font-size:30px;line-height:1;font-weight:900;">¿Por dónde puedo empezar?</h2>
+                      <h2 style="margin:0 0 12px;font-size:30px;line-height:1;font-weight:900;">${escapeHtml(getContent("email.ctaTitle", "¿Por dónde puedo empezar?"))}</h2>
                       <p style="margin:0 auto 22px;max-width:460px;color:#686868;font-weight:700;line-height:1.55;">
-                        Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.
+                        ${escapeHtml(getContent("email.ctaText", "Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso."))}
                       </p>
                       <a href="${whatsappUrl}" style="display:inline-block;background:#ffffff;color:#4f4f4f;border-radius:14px;padding:16px 24px;text-decoration:none;font-weight:900;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,0.12);">
-                        Hablar por WhatsApp
+                        ${escapeHtml(getContent("email.ctaButton", "Hablar por WhatsApp"))}
                       </a>
                     </td>
                   </tr>
@@ -120,7 +137,7 @@ function buildResultEmail(data, result) {
             </tr>
           </table>
           <p style="max-width:680px;margin:16px auto 0;color:#777;font-size:12px;line-height:1.5;">
-            Este correo contiene una estimación orientativa y no sustituye una valoración profesional.
+            ${escapeHtml(getContent("email.disclaimer", "Este correo contiene una estimación orientativa y no sustituye una valoración profesional."))}
           </p>
         </td>
       </tr>
@@ -203,7 +220,7 @@ async function sendResultEmail(data, result) {
     body: JSON.stringify({
       from: process.env.RESEND_FROM_EMAIL || "Calculadora <onboarding@resend.dev>",
       to: [data.email],
-        subject: "Tu resultado de edad metabólica",
+      subject: getContent("email.subject", "Tu resultado de edad metabólica"),
       html: buildResultEmail(data, result),
     }),
   });

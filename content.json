@@ -1,0 +1,159 @@
+{
+  "page": {
+    "browserTitle": "Calculadora de edad metabólica",
+    "headerPrefix": "Calculadora de edad",
+    "headerHighlight": "metabólica",
+    "heroEyebrow": "Medición automática",
+    "heroTitle": "Empecemos",
+    "heroText": "Tu edad metabólica mide cómo tu dieta y estilo de vida afectan tu salud, a diferencia de tu edad cronológica."
+  },
+  "form": {
+    "labels": {
+      "fullName": "¿Cómo te llamas?",
+      "email": "Correo",
+      "age": "¿Cuántos años tienes?",
+      "sex": "Género",
+      "height": "¿Cuánto mides?",
+      "weight": "¿Cuánto pesas?",
+      "activity": "¿Cuál es tu nivel de actividad física diaria?",
+      "energyLevel": "¿Cómo describirías tu energía diaria?",
+      "sleepQuality": "¿Cómo es tu descanso?",
+      "stressAnxiety": "¿Sientes estrés o ansiedad frecuentemente?",
+      "phone": "Teléfono",
+      "optional": "(opcional)"
+    },
+    "placeholders": {
+      "fullName": "Juan",
+      "email": "juan@email.com",
+      "phone": "+34 600 000 000"
+    },
+    "options": {
+      "sex": {
+        "male": "Hombre",
+        "female": "Mujer"
+      },
+      "activity": {
+        "sedentary": "Sedentario",
+        "light": "Ligero",
+        "moderate": "Moderado",
+        "active": "Activo",
+        "athlete": "Muy activo"
+      },
+      "energyLevel": {
+        "very_low": "Muy baja",
+        "low": "Baja",
+        "stable": "Estable",
+        "high": "Alta",
+        "very_high": "Muy alta"
+      },
+      "sleepQuality": {
+        "poor": "Malo",
+        "irregular": "Irregular",
+        "normal": "Normal",
+        "good": "Bueno",
+        "excellent": "Excelente"
+      },
+      "stressAnxiety": {
+        "no": "No, casi nunca",
+        "sometimes": "A veces",
+        "frequent": "Sí, frecuentemente"
+      }
+    },
+    "consentBefore": "He leído y acepto la",
+    "consentLink": "política de privacidad y términos",
+    "consentAfter": "y el tratamiento de mis datos.",
+    "calculateButton": "Calcular ahora",
+    "resetLabel": "Reiniciar calculadora"
+  },
+  "results": {
+    "ariaLabel": "Resultado de edad metabólica",
+    "eyebrow": "Edad metabólica estimada",
+    "years": "años",
+    "realAgeLabel": "Edad real",
+    "realAgeCaption": "años cronológicos",
+    "bmrLabel": "Metabolismo basal",
+    "bmrUnit": "kcal/día",
+    "bmiLabel": "IMC",
+    "deltaCaption": "años vs. edad real",
+    "summaryTitle": "Resumen del cálculo",
+    "activityLabel": "Actividad diaria",
+    "tdeeLabel": "Gasto estimado",
+    "statusLabel": "Estado",
+    "waterLabel": "Hidratación guía",
+    "compositionScore": "Composición",
+    "activityScore": "Actividad",
+    "vitalityScore": "Vitalidad"
+  },
+  "resultCopies": {
+    "younger": {
+      "badge": "Más joven",
+      "status": "Muy favorable",
+      "title": "Tu metabolismo apunta joven",
+      "text": "Tu actividad y composición estimada colocan tu edad metabólica por debajo de tu edad real."
+    },
+    "balanced": {
+      "badge": "En equilibrio",
+      "status": "Equilibrado",
+      "title": "Metabolismo en equilibrio",
+      "text": "Tu resultado se mantiene cerca de tu edad cronológica. La actividad y los hábitos diarios pueden moverlo a mejor o peor."
+    },
+    "improvable": {
+      "badge": "Mejorable",
+      "status": "Atención suave",
+      "title": "Hay margen para rejuvenecer",
+      "text": "Tu edad metabólica queda algo por encima de tu edad real. Más movimiento diario y una composición corporal saludable pueden ayudar."
+    },
+    "highPriority": {
+      "badge": "Prioridad alta",
+      "status": "Revisar hábitos",
+      "title": "Tu metabolismo pide cuidado",
+      "text": "La estimación queda claramente por encima de tu edad real. Conviene revisar actividad, descanso, alimentación y seguimiento profesional si aplica."
+    }
+  },
+  "whatsapp": {
+    "title": "¿Por dónde puedo empezar?",
+    "text": "Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.",
+    "button": "Hablar por WhatsApp",
+    "defaultMessage": "Hola, quiero información sobre los planes después de usar la calculadora de edad metabólica.",
+    "resultMessage": "Hola, soy {fullName}. Acabo de calcular mi edad metabólica. Tengo {age} años, mi resultado estimado es {metabolicAge} años y quiero saber por dónde empezar.",
+    "emailMessage": "Hola, soy {fullName}. He recibido mi resultado de edad metabólica ({metabolicAge} años) y quiero saber por dónde empezar."
+  },
+  "modals": {
+    "terms": {
+      "closeLabel": "Cerrar términos",
+      "eyebrow": "Aviso legal",
+      "versionLabel": "Versión aceptada:",
+      "acceptButton": "Aceptar términos"
+    },
+    "email": {
+      "closeLabel": "Cerrar aviso",
+      "acceptButton": "Entendido",
+      "success": {
+        "eyebrow": "Resultado enviado",
+        "title": "Revisa tu correo",
+        "text": "Te hemos enviado el resumen de tu edad metabólica a {email}."
+      },
+      "error": {
+        "eyebrow": "Resultado guardado",
+        "title": "Correo pendiente",
+        "text": "Hemos calculado tu resultado, pero el envío por correo necesita que Supabase y Resend estén configurados en el servidor."
+      }
+    }
+  },
+  "email": {
+    "subject": "Tu resultado de edad metabólica",
+    "browserTitle": "Resultado de edad metabólica",
+    "headline": "Resultado de edad metabólica",
+    "greeting": "Hola {fullName}, este es el resumen de tu calculadora.",
+    "estimatedAge": "Edad metabólica estimada",
+    "chronologicalAge": "Edad cronológica: {age} años",
+    "years": "años",
+    "bmr": "Metabolismo basal",
+    "bmi": "IMC",
+    "activity": "Actividad",
+    "ctaTitle": "¿Por dónde puedo empezar?",
+    "ctaText": "Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.",
+    "ctaButton": "Hablar por WhatsApp",
+    "disclaimer": "Este correo contiene una estimación orientativa y no sustituye una valoración profesional."
+  }
+}

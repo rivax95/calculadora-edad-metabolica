@@ -13,6 +13,7 @@ const defaults = {
 const WHATSAPP_PHONE = "34623243958";
 const EMAIL_ENDPOINT = "/api/send-result";
 const TERMS_ENDPOINT = "/api/terms";
+const CONTENT_ENDPOINT = "/content.json";
 const FALLBACK_TERMS = {
   version: "2026-05-14-v1",
   title: "Términos y privacidad",
@@ -139,6 +140,173 @@ let hasCalculated = false;
 let latestResult = null;
 let currentTerms = FALLBACK_TERMS;
 let shouldScrollToWhatsapp = false;
+let content = {};
+
+function getContent(path, fallback) {
+  const value = path.split(".").reduce((current, key) => current?.[key], content);
+  return value ?? fallback;
+}
+
+function formatTemplate(template, values = {}) {
+  return String(template || "").replace(/\{(\w+)\}/g, (_, key) => values[key] ?? "");
+}
+
+function setSelectorText(selector, value) {
+  const element = document.querySelector(selector);
+
+  if (element && value) {
+    element.textContent = value;
+  }
+}
+
+function setSelectorAttribute(selector, attribute, value) {
+  const element = document.querySelector(selector);
+
+  if (element && value) {
+    element.setAttribute(attribute, value);
+  }
+}
+
+function setButtonWithIcon(button, label, iconName) {
+  if (!button || !label) return;
+
+  button.textContent = label;
+  const icon = document.createElement("i");
+  icon.setAttribute("data-lucide", iconName);
+  button.appendChild(icon);
+}
+
+function setRadioLabel(value, label) {
+  const input = form.querySelector(`input[name="sex"][value="${value}"]`);
+
+  if (input?.parentElement && label) {
+    input.parentElement.lastChild.textContent = ` ${label}`;
+  }
+}
+
+function setSelectOptions(select, options, fallbackValue) {
+  if (!select || !options) return;
+
+  const selectedValue = select.value || fallbackValue;
+  select.innerHTML = "";
+
+  for (const [value, label] of Object.entries(options)) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    select.appendChild(option);
+  }
+
+  select.value = options[selectedValue] ? selectedValue : fallbackValue;
+}
+
+function applyContent() {
+  document.title = getContent("page.browserTitle", document.title);
+  setSelectorText(".page-title span", getContent("page.headerPrefix"));
+  setSelectorText(".page-title strong", getContent("page.headerHighlight"));
+  setSelectorText(".card-heading .eyebrow", getContent("page.heroEyebrow"));
+  setSelectorText(".card-heading h1", getContent("page.heroTitle"));
+  setSelectorText(".card-heading p", getContent("page.heroText"));
+
+  setSelectorText('label[for="fullName"]', getContent("form.labels.fullName"));
+  setSelectorText('label[for="email"]', getContent("form.labels.email"));
+  setSelectorText('label[for="age"]', getContent("form.labels.age"));
+  setSelectorText('label[for="height"]', getContent("form.labels.height"));
+  setSelectorText('label[for="weight"]', getContent("form.labels.weight"));
+  setSelectorText('label[for="activity"]', getContent("form.labels.activity"));
+  setSelectorText('label[for="energyLevel"]', getContent("form.labels.energyLevel"));
+  setSelectorText('label[for="sleepQuality"]', getContent("form.labels.sleepQuality"));
+  setSelectorText('label[for="stressAnxiety"]', getContent("form.labels.stressAnxiety"));
+  setSelectorText(".optional-label", getContent("form.labels.optional"));
+
+  const phoneLabel = document.querySelector('label[for="phone"]');
+  const phoneText = getContent("form.labels.phone");
+  const optionalText = getContent("form.labels.optional");
+  if (phoneLabel && phoneText && optionalText) {
+    phoneLabel.innerHTML = `${phoneText} <span class="optional-label">${optionalText}</span>`;
+  }
+
+  const sexFieldLabel = document.querySelector(".choice-row")?.previousElementSibling;
+  if (sexFieldLabel) {
+    sexFieldLabel.textContent = getContent("form.labels.sex", sexFieldLabel.textContent);
+  }
+
+  setSelectorAttribute("#fullName", "placeholder", getContent("form.placeholders.fullName"));
+  setSelectorAttribute("#email", "placeholder", getContent("form.placeholders.email"));
+  setSelectorAttribute("#phone", "placeholder", getContent("form.placeholders.phone"));
+  setSelectorAttribute("#resetButton", "aria-label", getContent("form.resetLabel"));
+  setButtonWithIcon(calculateButton, getContent("form.calculateButton"), "arrow-right");
+
+  setRadioLabel("male", getContent("form.options.sex.male"));
+  setRadioLabel("female", getContent("form.options.sex.female"));
+  setSelectOptions(fields.activity, getContent("form.options.activity"), defaults.activity);
+  setSelectOptions(fields.energyLevel, getContent("form.options.energyLevel"), defaults.energyLevel);
+  setSelectOptions(fields.sleepQuality, getContent("form.options.sleepQuality"), defaults.sleepQuality);
+  setSelectOptions(fields.stressAnxiety, getContent("form.options.stressAnxiety"), defaults.stressAnxiety);
+
+  const consentLabels = document.querySelectorAll(".consent-row label");
+  if (consentLabels[0]) consentLabels[0].textContent = getContent("form.consentBefore", consentLabels[0].textContent);
+  if (consentLabels[1]) consentLabels[1].textContent = getContent("form.consentAfter", consentLabels[1].textContent);
+  setSelectorText("#termsButton", getContent("form.consentLink"));
+
+  setSelectorAttribute("#resultsPanel", "aria-label", getContent("results.ariaLabel"));
+  setSelectorText(".result-main .eyebrow", getContent("results.eyebrow"));
+  setSelectorText(".age-line small", getContent("results.years"));
+  setSelectorText(".metric-card:nth-child(1) p", getContent("results.realAgeLabel"));
+  setSelectorText(".metric-card:nth-child(1) small", getContent("results.realAgeCaption"));
+  setSelectorText(".metric-card:nth-child(2) p", getContent("results.bmrLabel"));
+  setSelectorText(".metric-card:nth-child(2) small", getContent("results.bmrUnit"));
+  setSelectorText(".metric-card:nth-child(3) p", getContent("results.bmiLabel"));
+  setSelectorText(".meter-caption small", getContent("results.deltaCaption"));
+  setSelectorText(".insight-card .eyebrow", getContent("results.summaryTitle"));
+  setSelectorText(".stats-row:nth-child(1) span", getContent("results.activityLabel"));
+  setSelectorText(".stats-row:nth-child(2) span", getContent("results.tdeeLabel"));
+  setSelectorText(".stats-row:nth-child(3) span", getContent("results.statusLabel"));
+  setSelectorText(".stats-row:nth-child(4) span", getContent("results.waterLabel"));
+  setSelectorText(".score-item:nth-child(1) span", getContent("results.compositionScore"));
+  setSelectorText(".score-item:nth-child(2) span", getContent("results.activityScore"));
+  setSelectorText(".score-item:nth-child(3) span", getContent("results.vitalityScore"));
+
+  setSelectorText(".whatsapp-copy h2", getContent("whatsapp.title"));
+  setSelectorText(".whatsapp-copy p", getContent("whatsapp.text"));
+  const whatsappButtonText = getContent("whatsapp.button");
+  if (whatsappButtonText) {
+    output.whatsappLink.lastChild.textContent = ` ${whatsappButtonText}`;
+  }
+
+  setSelectorAttribute("#termsCloseButton", "aria-label", getContent("modals.terms.closeLabel"));
+  setSelectorText("#termsModal .eyebrow", getContent("modals.terms.eyebrow"));
+  setSelectorText("#termsAcceptButton", getContent("modals.terms.acceptButton"));
+  const termsVersion = document.querySelector(".terms-version");
+  const termsVersionLabelText = getContent("modals.terms.versionLabel");
+  if (termsVersion?.firstChild && termsVersionLabelText) {
+    termsVersion.firstChild.textContent = `${termsVersionLabelText} `;
+  }
+  setSelectorAttribute("#emailStatusCloseButton", "aria-label", getContent("modals.email.closeLabel"));
+  setSelectorText("#emailStatusAcceptButton", getContent("modals.email.acceptButton"));
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
+async function preloadContent() {
+  try {
+    const response = await fetch(CONTENT_ENDPOINT);
+    const payload = await response.json().catch(() => ({}));
+
+    if (response.ok && payload && typeof payload === "object") {
+      content = payload;
+      applyContent();
+      updateWhatsappLink(getFormData(), latestResult);
+      if (hasCalculated && form.checkValidity()) {
+        render();
+      }
+    }
+  } catch (error) {
+    applyContent();
+  }
+}
 
 function getSex() {
   return form.querySelector('input[name="sex"]:checked').value;
@@ -188,38 +356,38 @@ function getBodyScore(bmi) {
 
 function getResultCopy(delta) {
   if (delta <= -5) {
-    return {
+    return getContent("resultCopies.younger", {
       badge: "Más joven",
       status: "Muy favorable",
       title: "Tu metabolismo apunta joven",
       text: "Tu actividad y composición estimada colocan tu edad metabólica por debajo de tu edad real.",
-    };
+    });
   }
 
   if (delta <= 2) {
-    return {
+    return getContent("resultCopies.balanced", {
       badge: "En equilibrio",
       status: "Equilibrado",
       title: "Metabolismo en equilibrio",
       text: "Tu resultado se mantiene cerca de tu edad cronológica. La actividad y los hábitos diarios pueden moverlo a mejor o peor.",
-    };
+    });
   }
 
   if (delta <= 7) {
-    return {
+    return getContent("resultCopies.improvable", {
       badge: "Mejorable",
       status: "Atención suave",
       title: "Hay margen para rejuvenecer",
       text: "Tu edad metabólica queda algo por encima de tu edad real. Más movimiento diario y una composición corporal saludable pueden ayudar.",
-    };
+    });
   }
 
-  return {
+  return getContent("resultCopies.highPriority", {
     badge: "Prioridad alta",
     status: "Revisar hábitos",
     title: "Tu metabolismo pide cuidado",
     text: "La estimación queda claramente por encima de tu edad real. Conviene revisar actividad, descanso, alimentación y seguimiento profesional si aplica.",
-  };
+  });
 }
 
 function calculateMetabolicAge(data) {
@@ -250,8 +418,8 @@ function calculateMetabolicAge(data) {
     vitalityScore,
     water: Math.max(data.weight * 0.035, 1.5),
     bmiLabel: getBmiLabel(bmi),
-    activityLabel: profile.label,
-    stressLabel: stressProfile.label,
+    activityLabel: getContent(`form.options.activity.${data.activity}`, profile.label),
+    stressLabel: getContent(`form.options.stressAnxiety.${data.stressAnxiety}`, stressProfile.label),
     copy: getResultCopy(delta),
   };
 }
@@ -280,9 +448,12 @@ function createWhatsappUrl(message) {
 }
 
 function updateWhatsappLink(data, result) {
-  const message = result
+  const values = { ...data, ...(result || {}) };
+  const fallback = result
     ? `Hola, soy ${data.fullName}. Acabo de calcular mi edad metabólica. Tengo ${data.age} años, mi resultado estimado es ${result.metabolicAge} años y quiero saber por dónde empezar.`
     : DEFAULT_WHATSAPP_MESSAGE;
+  const template = result ? getContent("whatsapp.resultMessage", fallback) : getContent("whatsapp.defaultMessage", fallback);
+  const message = formatTemplate(template, values);
 
   output.whatsappLink.href = createWhatsappUrl(message);
 }
@@ -442,17 +613,17 @@ form.addEventListener("submit", async (event) => {
   try {
     await sendResultEmail(data, result);
     showEmailStatusModal({
-      eyebrow: "Resultado enviado",
-      title: "Revisa tu correo",
-      text: `Te hemos enviado el resumen de tu edad metabólica a ${data.email}.`,
+      eyebrow: getContent("modals.email.success.eyebrow", "Resultado enviado"),
+      title: getContent("modals.email.success.title", "Revisa tu correo"),
+      text: formatTemplate(getContent("modals.email.success.text", "Te hemos enviado el resumen de tu edad metabólica a {email}."), { email: data.email }),
     });
     shouldScrollToWhatsapp = true;
   } catch (error) {
     showResults();
     showEmailStatusModal({
-      eyebrow: "Resultado guardado",
-      title: "Correo pendiente",
-      text: "Hemos calculado tu resultado, pero el envío por correo necesita que Supabase y Resend estén configurados en el servidor.",
+      eyebrow: getContent("modals.email.error.eyebrow", "Resultado guardado"),
+      title: getContent("modals.email.error.title", "Correo pendiente"),
+      text: getContent("modals.email.error.text", "Hemos calculado tu resultado, pero el envío por correo necesita que Supabase y Resend estén configurados en el servidor."),
       isError: true,
     });
     shouldScrollToWhatsapp = false;
@@ -524,4 +695,5 @@ hideResults();
 whatsappSection.classList.add("is-hidden");
 updateWhatsappLink(getFormData(), null);
 refreshSubmitState();
+preloadContent();
 preloadTerms();
