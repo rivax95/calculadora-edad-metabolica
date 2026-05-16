@@ -10,13 +10,14 @@ const {
 
 function getAutomationConfig() {
   const rawSteps = getContent("automation.emails", []);
+  const defaultDelayDays = Math.max(0, Number(getContent("automation.defaultDelayDays", 2)) || 2);
   const steps = Array.isArray(rawSteps)
     ? rawSteps
-        .filter((step) => step?.active !== false && step?.key && Number.isFinite(Number(step.delayDays)))
+        .filter((step) => step?.active !== false && step?.key)
         .map((step, index) => ({
           ...step,
           stepOrder: index + 1,
-          delayDays: Number(step.delayDays),
+          delayDays: Number.isFinite(Number(step.delayDays)) ? Number(step.delayDays) : defaultDelayDays * (index + 1),
         }))
         .sort((a, b) => a.delayDays - b.delayDays || a.stepOrder - b.stepOrder)
     : [];
@@ -26,6 +27,7 @@ function getAutomationConfig() {
     sequenceKey: getContent("automation.sequenceKey", "metabolic_followup_v1"),
     name: getContent("automation.name", "Seguimiento edad metabólica"),
     maxAttempts: Number(getContent("automation.maxAttempts", 3)) || 3,
+    defaultDelayDays,
     steps,
   };
 }
