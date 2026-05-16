@@ -4,6 +4,9 @@ const defaults = {
   height: 175,
   weight: 78,
   activity: "moderate",
+  energyLevel: "stable",
+  sleepQuality: "normal",
+  stressAnxiety: "no",
 };
 
 
@@ -51,6 +54,21 @@ const activityProfiles = {
   },
 };
 
+const stressProfiles = {
+  no: {
+    label: "No, casi nunca",
+    ageImpact: 0,
+  },
+  sometimes: {
+    label: "A veces",
+    ageImpact: 1,
+  },
+  frequent: {
+    label: "Sí, frecuentemente",
+    ageImpact: 3,
+  },
+};
+
 const form = document.querySelector("#metabolicForm");
 const resetButton = document.querySelector("#resetButton");
 const calculateButton = document.querySelector("#calculateButton");
@@ -78,6 +96,9 @@ const fields = {
   height: document.querySelector("#height"),
   weight: document.querySelector("#weight"),
   activity: document.querySelector("#activity"),
+  energyLevel: document.querySelector("#energyLevel"),
+  sleepQuality: document.querySelector("#sleepQuality"),
+  stressAnxiety: document.querySelector("#stressAnxiety"),
 };
 
 const output = {
@@ -138,6 +159,9 @@ function getFormData() {
     height: clampNumber(fields.height.value, 120, 230),
     weight: clampNumber(fields.weight.value, 35, 250),
     activity: fields.activity.value,
+    energyLevel: fields.energyLevel.value,
+    sleepQuality: fields.sleepQuality.value,
+    stressAnxiety: fields.stressAnxiety.value,
   };
 }
 
@@ -204,9 +228,12 @@ function calculateMetabolicAge(data) {
   const bmi = data.weight / heightMeters ** 2;
   const bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + sexConstant;
   const profile = activityProfiles[data.activity];
+  const stressProfile = stressProfiles[data.stressAnxiety] || stressProfiles.no;
   const tdee = bmr * profile.multiplier;
   const bmiImpact = getBmiImpact(bmi);
-  const metabolicAge = Math.round(Math.max(14, Math.min(90, data.age + bmiImpact + profile.ageImpact)));
+  const metabolicAge = Math.round(
+    Math.max(14, Math.min(90, data.age + bmiImpact + profile.ageImpact + stressProfile.ageImpact)),
+  );
   const delta = metabolicAge - data.age;
   const bodyScore = getBodyScore(bmi);
   const activityScore = profile.score;
@@ -224,6 +251,7 @@ function calculateMetabolicAge(data) {
     water: Math.max(data.weight * 0.035, 1.5),
     bmiLabel: getBmiLabel(bmi),
     activityLabel: profile.label,
+    stressLabel: stressProfile.label,
     copy: getResultCopy(delta),
   };
 }
@@ -386,6 +414,9 @@ function resetForm() {
   fields.height.value = defaults.height;
   fields.weight.value = defaults.weight;
   fields.activity.value = defaults.activity;
+  fields.energyLevel.value = defaults.energyLevel;
+  fields.sleepQuality.value = defaults.sleepQuality;
+  fields.stressAnxiety.value = defaults.stressAnxiety;
   hideResults();
   whatsappSection.classList.add("is-hidden");
   shouldScrollToWhatsapp = false;

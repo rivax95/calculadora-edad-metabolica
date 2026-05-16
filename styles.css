@@ -176,6 +176,11 @@ h1 {
   font-weight: 900;
 }
 
+.optional-label {
+  color: #7a7a7a;
+  font-weight: 800;
+}
+
 select,
 input[type="number"],
 input[type="text"],
