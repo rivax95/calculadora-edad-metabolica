@@ -135,7 +135,7 @@
   },
   "whatsapp": {
     "title": "¿Por dónde puedo empezar?",
-    "text": "Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.",
+    "text": "Miles de mujeres ya han empezado a recuperar su energía y bienestar. Tú también puedes hacerlo.",
     "button": "Hablar por WhatsApp",
     "defaultMessage": "Hola, quiero información sobre los planes después de usar la calculadora de edad metabólica.",
     "resultMessage": "Hola, soy {fullName}. Acabo de calcular mi edad metabólica. Tengo {age} años, mi resultado estimado es {metabolicAge} años y quiero saber por dónde empezar.",
@@ -175,7 +175,7 @@
     "bmi": "IMC",
     "activity": "Actividad",
     "ctaTitle": "¿Por dónde puedo empezar?",
-    "ctaText": "Pregunta directamente por nuestros planes. Te ayudaremos a entender tu resultado y dar el siguiente paso.",
+    "ctaText": "Miles de mujeres ya han empezado a recuperar su energía y bienestar. Tú también puedes hacerlo.",
     "ctaButton": "Hablar por WhatsApp",
     "disclaimer": "Este correo contiene una estimación orientativa y no sustituye una valoración profesional."
   }
